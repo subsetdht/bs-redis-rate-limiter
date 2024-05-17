@@ -74,12 +74,6 @@ async def process_page(worker_name, page_num, queue_name):
 
 
 async def main():
-    # many workers ( many documents )
-    # await asyncio.gather(
-    #     worker(worker_name='workerA'), # equivalent to hitting docqa cloudfunction API
-    #     worker(worker_name='workerB'),
-    #     worker(worker_name='workerC')
-    # )
     global r
     global _REDIS_LIMIT_SCRIPT
 
@@ -94,64 +88,9 @@ end
            ''')
 
     tStart = time.perf_counter_ns()
-    # many workers, many queues/accounts
-    # await asyncio.gather(
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu01', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu02', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu03', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu04', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu05', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu06', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu07', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu08', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu09', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu00', num_pages=200)),
-
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu11', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu12', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu13', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu14', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu15', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu16', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu17', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu18', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu19', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu10', num_pages=200)),
-
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu21', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu22', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu23', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu24', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu25', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu26', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu27', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu28', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu29', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu20', num_pages=200)),
-
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu31', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu32', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu33', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu34', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu35', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu36', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu37', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu38', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu39', num_pages=200)),
-    #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu30', num_pages=200)),
-    # )
 
     async with asyncio.TaskGroup() as tg:
         tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu01', num_pages=2000)),
-        tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu02', num_pages=2000)),
-        tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu03', num_pages=2000)),
-        tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu04', num_pages=2000)),
-        tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu05', num_pages=2000)),
-        tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu06', num_pages=2000)),
-        tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu07', num_pages=2000)),
-        tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu08', num_pages=2000)),
-        tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu09', num_pages=2000)),
-        tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu00', num_pages=2000)),
 
     tStop = time.perf_counter_ns()
 
@@ -161,5 +100,3 @@ end
     #     worker(worker_name=uuid.uuid4())
     # )
 asyncio.run(main())
-# if >= 0 then run
-# if < 0 then sleep TTL and try again
