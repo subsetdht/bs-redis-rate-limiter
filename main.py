@@ -4,7 +4,7 @@ import random # code commented out, but provides fake work random duration
 import uuid
 import datetime 
 import time
-import multiprocessing
+import threading
 
 def reserve_execution_capacity(rate_limit_bucket, decrement):
 
@@ -114,30 +114,30 @@ async def main():
     #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu09', num_pages=2000)),
     #     tg.create_task(mock_cf_request(request_name='Document1', queue_name=f'chr_ptu00', num_pages=2000)),
 
-    p11 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p12 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p13 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p14 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p21 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p22 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p23 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p24 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p31 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p32 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p33 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p34 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p211 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p212 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p213 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p214 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p221 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p222 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p223 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p224 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p231 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p232 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p233 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
-    p234 = multiprocessing.Process(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p11 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p12 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p13 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p14 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p21 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p22 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p23 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p24 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p31 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p32 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p33 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p34 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p211 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p212 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p213 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p214 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p221 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p222 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p223 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p224 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p231 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p232 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p233 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
+    p234 = threading.Thread(target=run_process_page, kwargs={'request_name':'Document1', 'num_pages':50000})
 
     p11.start()
     p12.start()
