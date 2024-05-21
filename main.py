@@ -19,31 +19,31 @@ end
         
 
     ### This function leverages the redis 
-    def reserve_execution_capacity(self, rate_limit_bucket, decrement):
+    def check_for_capacity(self, token_bucket, capacity_required, bucket_capacity, expiration_period):
         
         # Create a Redis Pipeline object ( executes as an atomic transaction on the instance ) and returns
         # a 0-indexed array of values which are the results of each of the executable components in the pipeline
         redis_transaction = self.redis_instance.pipeline()
 
         # Index 0 : set up quota if it doesn't already exist setting the expiry(ex, seconds) and capacity(value)
-        redis_transaction.set(name=rate_limit_bucket, value=300000000000, nx=True, ex=10)
+        redis_transaction.set(name=token_bucket, value=bucket_capacity, nx=True, ex=expiration_period)
 
         # Index 1 : get current remaining quota
-        redis_transaction.get(rate_limit_bucket)
+        redis_transaction.get(token_bucket)
 
         # Index 2 : decrease quota by decrement scalar if capacity exists, or returns -1 to signal no capacity for this size request
         # Note that we have previously cached the script on the redis instance and are calling the script using the SHA returned during
         # caching.
-        redis_transaction.evalsha(self._REDIS_LIMIT_SCRIPT, 2, rate_limit_bucket, decrement)
+        redis_transaction.evalsha(self._REDIS_LIMIT_SCRIPT, 2, token_bucket, capacity_required)
         
         # Index 3 : get remaining expiration time
-        redis_transaction.ttl(rate_limit_bucket)
+        redis_transaction.ttl(token_bucket)
 
         # Execute the pipeline
         pipeline_result = redis_transaction.execute()
         
         if(bool(pipeline_result[0])):
-            print(f'''{datetime.datetime.now().strftime('%H:%M:%S.%f')} - Quota refreshed for {rate_limit_bucket}''')
+            print(f'''{datetime.datetime.now().strftime('%H:%M:%S.%f')} - Quota refreshed for {token_bucket}''')
 
         # print(pipeline_result[2])
 
@@ -58,17 +58,17 @@ end
 
 
             # run
-    async def wait_for_capacity(self, queue_name, required_capacity):
+    async def reserve_capacity(self, token_bucket, capacity_required, bucket_capacity, expiration_period):
         # block execution chain until available capacity
-        dequeue = self.reserve_execution_capacity(rate_limit_bucket=queue_name, decrement=required_capacity)
+        dequeue = self.check_for_capacity(token_bucket, capacity_required, bucket_capacity, expiration_period)
         while int(dequeue['remaining_quota']) < 0:
             # print(f'Worker:{worker_name} sleeping for {dq['time_until_refresh']} seconds)')
             await asyncio.sleep(dequeue['time_until_refresh'])
-            dequeue = self.reserve_execution_capacity(rate_limit_bucket=queue_name, decrement=required_capacity)
+            dequeue = self.check_for_capacity(token_bucket, capacity_required, bucket_capacity, expiration_period)
 
 async def process_page(worker_name, page_num, queue_name, rate_limiter):
-    required_capacity = random.randint(1,5000)
-    await rate_limiter.wait_for_capacity(queue_name, required_capacity)
+    capacity_required = random.randint(1,5)
+    await rate_limiter.reserve_capacity(queue_name, capacity_required, 30000, 5 )
         # print(f'{datetime.datetime.now().strftime('%H:%M:%S.%f')} - API call for {worker_name} ( page {page_num} ( {required_capacity} tokens) ) started')
         
         # work takes fake amount of seconds between 1 and 5
