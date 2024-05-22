@@ -7,8 +7,8 @@ import time
 
 
 class redis_rate_limiter:
-    def __init__(self, redis_connection=redis.Redis(host='localhost', decode_responses=True), ):
-        self.redis_instance =   redis_connection
+    def __init__(self, redis_instance=redis.Redis(host='localhost', decode_responses=True)):
+        self.redis_instance =   redis_instance
         self._REDIS_LIMIT_SCRIPT =  self.redis_instance.script_load('''
 if tonumber(redis.call('GET', KEYS[1])) >= tonumber(KEYS[2]) then
     return redis.call('DECRBY', KEYS[1], KEYS[2])
@@ -58,7 +58,7 @@ end
 
 
             # run
-    async def reserve_capacity(self, token_bucket, capacity_required, bucket_capacity, expiration_period):
+    async def wait_for_capacity(self, token_bucket, capacity_required, bucket_capacity, expiration_period):
         # block execution chain until available capacity
         dequeue = self.check_for_capacity(token_bucket, capacity_required, bucket_capacity, expiration_period)
         while int(dequeue['remaining_quota']) < 0:
@@ -68,7 +68,7 @@ end
 
 async def process_page(worker_name, page_num, queue_name, rate_limiter):
     capacity_required = random.randint(1,5)
-    await rate_limiter.reserve_capacity(queue_name, capacity_required, 30000, 5 )
+    await rate_limiter.wait_for_capacity(queue_name, capacity_required, 30000, 5 )
         # print(f'{datetime.datetime.now().strftime('%H:%M:%S.%f')} - API call for {worker_name} ( page {page_num} ( {required_capacity} tokens) ) started')
         
         # work takes fake amount of seconds between 1 and 5
@@ -85,7 +85,8 @@ async def mock_cf_request(request_name,rate_limiter,IsRateLimited=True, num_page
             tg.create_task(process_page(request_name, i, queue_name, rate_limiter))
 
 async def main():
-    rate_limiter = redis_rate_limiter()
+    redis_instance = redis.Redis(host='localhost', decode_responses=True)
+    rate_limiter = redis_rate_limiter(redis_instance)
 
     tStart = time.perf_counter_ns()
 
